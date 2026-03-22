@@ -1,6 +1,6 @@
-use std::{thread, time::Duration};
-
+use colored::*;
 use std::collections::HashMap;
+use std::{thread, time::Duration};
 use sysinfo::{Networks, System};
 
 struct NetworkState {
@@ -13,15 +13,22 @@ fn bytes_to_gb(bytes: u64) -> f64 {
 }
 
 fn display_memory(sys: &System) {
-    println!("\nMemory");
+    println!("{}", " MEMORY ".on_cyan().black().bold());
 
     let total_mem = bytes_to_gb(sys.total_memory());
     let used_mem = bytes_to_gb(sys.used_memory());
-
     let mem_perc = (used_mem / total_mem) * 100.0;
+
+    let progress = (mem_perc / 10.0) as usize;
+    let bar = format!(
+        "[ {}{}]",
+        "▓ ".repeat(progress).cyan(),
+        "░ ".repeat(10 - progress).white()
+    );
+
     println!(
-        "   {:.2} GB / {:.2} GB {:.2}%",
-        used_mem, total_mem, mem_perc
+        "{}   {:.2} GB / {:.2} GB ({:.2}%)\n",
+        bar, used_mem, total_mem, mem_perc
     );
 }
 
